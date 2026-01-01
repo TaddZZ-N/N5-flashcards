@@ -92,7 +92,7 @@
             const grid = document.getElementById('flashcardGrid');
             grid.innerHTML = '';
             const filtered = vocabData.filter(item => {
-                const matchesCat = filter === 'all' || item.cat === filter;
+                const matchesCat = (filter === 'all') ? (item.cat !== 'kanji') : (item.cat === filter);
                 const s = search.toLowerCase();
                 return matchesCat && (
                     item.meaning.toLowerCase().includes(s) || 
