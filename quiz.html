@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Kanji N5</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .quiz-container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .q-kanji { font-size: 80px; color: #ff4757; margin-bottom: 20px; }
+        .options-grid { display: grid; gap: 10px; }
+        .option-btn { padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: none; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .option-btn:hover { border-color: #ff4757; background: #fff5f5; }
+        .correct { background: #2ed573 !important; color: white; border-color: #2ed573; }
+        .wrong { background: #ff4757 !important; color: white; border-color: #ff4757; }
+        #score { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-box">
+        <div id="progress">Soal 0/0</div>
+        <div class="q-kanji" id="currentKanji">...</div>
+        <div class="options-grid" id="options">
+            <!-- Tombol jawaban muncul di sini -->
+        </div>
+        <div id="score">Skor: 0</div>
+    </div>
+    <div id="result-box" style="display:none;">
+        <h2>Kuis Selesai!</h2>
+        <p id="final-score"></p>
+        <button onclick="location.reload()" class="option-btn" style="width:100%">Coba Lagi</button>
+    </div>
+</div>
+
+<script>
+    // URL Gist Anda (Pastikan link RAW)
+    const CLOUD_URL = 'https://gist.githubusercontent.com/TaddZZ-N/d35086624e71d0228e3b9280dcc9d0ea/raw/gistfile1.txt';
+    
+    let allKanji = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    async function startQuiz() {
+        const response = await fetch(CLOUD_URL);
+        const data = await response.json();
+        // Hanya ambil kategori kanji
+        allKanji = data.filter(item => item.cat === 'kanji').sort(() => Math.random() - 0.5);
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentIndex >= allKanji.length) {
+            showResult();
+            return;
+        }
+
+        const current = allKanji[currentIndex];
+        document.getElementById('currentKanji').innerText = current.kanji;
+        document.getElementById('progress').innerText = `Soal ${currentIndex + 1}/${allKanji.length}`;
+
+        // Buat pilihan jawaban (1 benar, 3 salah acak)
+        let choices = [current.meaning];
+        let others = allKanji.filter(k => k.meaning !== current.meaning);
+        while (choices.length < 4) {
+            let rand = others[Math.floor(Math.random() * others.length)].meaning;
+            if (!choices.includes(rand)) choices.push(rand);
+        }
+        choices.sort(() => Math.random() - 0.5);
+
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = choice;
+            btn.onclick = () => checkAnswer(choice, current.meaning, btn);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, correct, btn) {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score += 10;
+        } else {
+            btn.classList.add('wrong');
+            // Tunjukkan jawaban yang benar
+            allBtns.forEach(b => { if(b.innerText === correct) b.classList.add('correct'); });
+        }
+        
+        document.getElementById('score').innerText = `Skor: ${score}`;
+        setTimeout(() => {
+            currentIndex++;
+            showQuestion();
+        }, 1500);
+    }
+
+    function showResult() {
+        document.getElementById('quiz-box').style.display = 'none';
+        document.getElementById('result-box').style.display = 'block';
+        document.getElementById('final-score').innerText = `Skor Akhir Anda: ${score}`;
+    }
+
+    startQuiz();
+</script>
+</body>
+</html>
