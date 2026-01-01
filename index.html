@@ -13,6 +13,18 @@
             --card-front: #ffffff;
             --card-back: #2f3542;
         }
+        /* Tambahan warna khusus untuk kartu Kanji */
+        .card-container.kanji-style .card-front { 
+            background-color: #fff9db !important; 
+            border: 2px solid #fcc419; 
+        }
+        .card-container.kanji-style .kanji { 
+            color: #856404 !important; 
+        }
+        .card-container.kanji-style .category-tag {
+            background-color: #fcc419;
+            color: #856404;
+        }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
         header { text-align: center; margin-bottom: 30px; position: sticky; top: 0; background: var(--bg); padding: 10px; z-index: 100; }
         .filter-container { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
@@ -70,7 +82,7 @@
 
         function createCard(item) {
             const container = document.createElement('div');
-            container.className = 'card-container';
+            container.className = 'card-container' + (item.cat === 'kanji' ? ' kanji-style' : '');
             container.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front">
