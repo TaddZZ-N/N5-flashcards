@@ -5,51 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard N5 - TaddZZ</title>
     <style>
-        :root { --primary: #ff4757; --bg: #f0f2f5; --card-front: #ffffff; --card-back: #2f3542; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; position: sticky; top: 0; background: var(--bg); padding: 10px; z-index: 100; }
-        .quiz-link { display: inline-block; margin-bottom: 15px; text-decoration:none; color: var(--primary); font-weight:bold; border: 2px solid var(--primary); padding: 8px 20px; border-radius: 10px; transition: 0.3s; }
-        .quiz-link:hover { background: var(--primary); color: white; }
-        .filter-container { margin: 15px 0; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .filter-btn { padding: 8px 14px; border: none; border-radius: 20px; background: #dfe4ea; cursor: pointer; font-size: 14px; }
-        .filter-btn.active { background: var(--primary); color: white; }
-        /* Style Tombol Kanji */
-        .btn-kanji { background: #fff3cd !important; color: #856404 !important; border: 1px solid #ffeeba !important; }
-        .btn-kanji.active { background: #fcc419 !important; color: #fff !important; }
+        :root { 
+            --primary: #ff4757; 
+            --secondary: #2ed573;
+            --bg: #f0f2f5; 
+            --card-front: #ffffff; 
+            --card-back: #2f3542; 
+        }
+        
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
 
-        #searchInput { width: 90%; max-width: 400px; padding: 12px; border-radius: 8px; border: 2px solid #ddd; margin-bottom: 10px; }
-        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .card-container { height: 220px; perspective: 1000px; cursor: pointer; }
-        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 15px; }
+        /* HEADER KOMPAK */
+        header { 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            background: white; 
+            padding: 10px 5px; 
+            z-index: 100; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { font-size: 1.2rem; margin: 0 0 10px 0; color: #2f3542; }
+
+        /* NAVIGASI KUIS SEJAJAR */
+        .quiz-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .quiz-link { 
+            flex: 1;
+            max-width: 150px;
+            text-decoration: none; 
+            font-size: 12px;
+            font-weight: bold; 
+            padding: 8px 0; 
+            border-radius: 8px; 
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            transition: 0.3s;
+        }
+        .quiz-link.alt { border-color: var(--secondary); color: var(--secondary); }
+        .quiz-link:active { background: #eee; }
+
+        /* FILTER BUTTONS RAPAT */
+        .filter-container { 
+            display: flex; 
+            justify-content: center; 
+            gap: 4px; 
+            flex-wrap: wrap; 
+            margin-bottom: 8px;
+        }
+
+        .filter-btn { 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 12px; 
+            background: #dfe4ea; 
+            cursor: pointer; 
+            font-size: 11px; 
+            color: #57606f;
+        }
+
+        .filter-btn.active { background: var(--primary); color: white; }
+        .btn-kanji { background: #fff3cd !important; color: #856404 !important; }
+        .btn-kanji.active { background: #fcc419 !important; color: white !important; }
+
+        /* SEARCH INPUT RAMPING */
+        #searchInput { 
+            width: 85%; 
+            max-width: 350px; 
+            padding: 8px 12px; 
+            border-radius: 20px; 
+            border: 1px solid #ddd; 
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* GRID KARTU */
+        .flashcard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 12px; 
+            padding: 15px;
+        }
+
+        .card-container { height: 200px; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.5s; transform-style: preserve-3d; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 15px; }
         .card-container.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; padding: 15px; box-sizing: border-box; }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; padding: 10px; box-sizing: border-box; border: 1px solid #eee; }
         .card-front { background-color: var(--card-front); color: #2f3542; }
         .card-back { background-color: var(--card-back); color: white; transform: rotateY(180deg); }
         
-        /* WARNA KHUSUS KARTU KANJI */
+        /* STYLE KHUSUS KANJI */
         .card-container.kanji-style .card-front { background-color: #fff9db !important; border: 2px solid #fcc419; }
         .card-container.kanji-style .kanji { color: #856404 !important; }
         
-        .kanji { font-size: 2.5rem; margin-bottom: 5px; color: var(--primary); }
-        .kana { font-size: 1rem; color: #747d8c; }
-        .meaning { font-size: 1.2rem; font-weight: bold; }
-        .category-tag { position: absolute; top: 8px; right: 8px; font-size: 0.6rem; background: #eee; padding: 2px 8px; border-radius: 10px; color: #333; }
+        .kanji { font-size: 2rem; margin-bottom: 5px; color: var(--primary); }
+        .kana { font-size: 0.9rem; color: #747d8c; }
+        .romaji { font-size: 0.8rem; color: #a4b0be; }
+        .meaning { font-size: 1.1rem; font-weight: bold; }
+        .category-tag { position: absolute; top: 8px; right: 8px; font-size: 0.5rem; background: #eee; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; color: #333; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>N5 Flashcards 🇯🇵</h1>
-        <a href="quiz.html" class="quiz-link">Mulai Kuis Kanji</a>
-        <a href="vocab-quiz.html" class="quiz-link" style="border-color: #2ed573; color: #2ed573;">Latihan Kosa Kata</a>
+        
+        <div class="quiz-nav">
+            <a href="quiz.html" class="quiz-link">Kuis Kanji</a>
+            <a href="vocab-quiz.html" class="quiz-link alt">Latihan Kata</a>
+        </div>
+
         <div class="filter-container">
             <button class="filter-btn active" data-category="all">Semua</button>
             <button class="filter-btn" data-category="noun">Benda</button>
             <button class="filter-btn" data-category="verb">Kerja</button>
             <button class="filter-btn" data-category="adj">Sifat</button>
             <button class="filter-btn" data-category="phrase">Salam</button>
-            <button class="filter-btn btn-kanji" data-category="kanji">Kanji N5</button>
+            <button class="filter-btn btn-kanji" data-category="kanji">Kanji</button>
         </div>
+        
         <input type="text" id="searchInput" placeholder="Cari kosa kata atau arti...">
     </header>
 
@@ -64,13 +145,14 @@
                 const response = await fetch(CLOUD_URL + '?t=' + new Date().getTime());
                 vocabData = await response.json();
                 render();
-            } catch (e) { document.getElementById('flashcardGrid').innerHTML = "Gagal memuat data kosa kata."; }
+            } catch (e) { 
+                document.getElementById('flashcardGrid').innerHTML = "<p style='text-align:center; padding:20px;'>Gagal memuat data.</p>"; 
+            }
         }
 
         function createCard(item) {
             const isKanji = item.cat === 'kanji';
             const container = document.createElement('div');
-            // Menambah class kanji-style jika kategorinya kanji
             container.className = `card-container ${isKanji ? 'kanji-style' : ''}`;
             container.innerHTML = `
                 <div class="card-inner">
@@ -82,7 +164,7 @@
                     </div>
                     <div class="card-back">
                         <span class="meaning">${item.meaning}</span>
-                        <p style="font-size:0.7rem;margin-top:10px;">${isKanji ? 'Onyomi/Kunyomi' : 'Klik balik'}</p>
+                        <p style="font-size:0.6rem;margin-top:10px;opacity:0.7;">${isKanji ? 'Onyomi/Kunyomi' : 'Klik balik'}</p>
                     </div>
                 </div>`;
             container.addEventListener('click', () => container.classList.toggle('flipped'));
@@ -93,10 +175,13 @@
             const grid = document.getElementById('flashcardGrid');
             grid.innerHTML = '';
             const filtered = vocabData.filter(item => {
-                // Sembunyikan kanji di menu 'all' agar tidak ganda
                 let matchesCat = (filter === 'all') ? (item.cat !== 'kanji') : (item.cat === filter);
                 const s = search.toLowerCase();
-                return matchesCat && (item.meaning.toLowerCase().includes(s) || item.kanji.includes(s) || (item.romaji && item.romaji.toLowerCase().includes(s)));
+                return matchesCat && (
+                    item.meaning.toLowerCase().includes(s) || 
+                    item.kanji.includes(s) || 
+                    (item.romaji && item.romaji.toLowerCase().includes(s))
+                );
             });
             filtered.forEach(item => grid.appendChild(createCard(item)));
         }
