@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Kosa Kata N5</title>
+    <style>
+        :root { --primary: #2ed573; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .quiz-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+        .setup-box select { width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; }
+        .q-word { font-size: 40px; font-weight: bold; color: #2f3542; margin: 20px 0; min-height: 60px; }
+        .kana-hint { font-size: 18px; color: #747d8c; margin-bottom: 10px; }
+        .options-grid { display: grid; gap: 10px; }
+        .option-btn { padding: 15px; border: 2px solid #dfe4ea; border-radius: 12px; background: white; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--primary); }
+        .correct { background: var(--primary) !important; color: white; border-color: var(--primary); }
+        .wrong { background: #ff4757 !important; color: white; border-color: #ff4757; }
+        .progress { font-size: 14px; color: #a4b0be; margin-bottom: 10px; }
+        .btn-start { background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
+        #result-box { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <!-- LAYAR SETUP -->
+    <div id="setup-box" class="setup-box">
+        <h2>Target Latihan Hari Ini</h2>
+        <p>Pilih kelompok kosa kata (50 kata per kelompok):</p>
+        <select id="rangeSelect">
+            <option value="0-50">Hari 1: Kata 1 - 50</option>
+            <option value="50-100">Hari 2: Kata 51 - 100</option>
+            <option value="100-150">Hari 3: Kata 101 - 150</option>
+            <option value="150-200">Hari 4: Kata 151 - 200</option>
+            <option value="200-250">Hari 5: Kata 201 - 250</option>
+            <option value="250-300">Hari 6: Kata 251 - 300</option>
+            <option value="300-350">Hari 7: Kata 301 - 350</option>
+            <option value="350-400">Hari 8: Kata 351 - 400</option>
+            <option value="400-450">Hari 9: Kata 401 - 450</option>
+            <option value="450-500">Hari 10: Kata 451 - 500</option>
+            <option value="500-1000">Sisanya: Kata 501 - Selesai</option>
+        </select>
+        <button class="btn-start" onclick="startQuiz()">Mulai Latihan</button>
+    </div>
+
+    <!-- LAYAR KUIS -->
+    <div id="quiz-box" style="display:none;">
+        <div class="progress" id="progressText">Soal 0/0</div>
+        <div class="kana-hint" id="qKana"></div>
+        <div class="q-word" id="qKanji"></div>
+        <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- LAYAR HASIL -->
+    <div id="result-box">
+        <h2>Latihan Selesai! 🎉</h2>
+        <p style="font-size: 24px;" id="finalScore"></p>
+        <button class="btn-start" onclick="location.reload()">Pilih Kelompok Lain</button>
+    </div>
+</div>
+
+<script>
+    const CLOUD_URL = 'https://gist.githubusercontent.com/TaddZZ-N/d35086624e71d0228e3b9280dcc9d0ea/raw/gistfile1.txt';
+    let allData = [];
+    let quizData = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    async function startQuiz() {
+        const range = document.getElementById('rangeSelect').value.split('-');
+        const startIdx = parseInt(range[0]);
+        const endIdx = parseInt(range[1]);
+
+        try {
+            const response = await fetch(CLOUD_URL + '?t=' + new Date().getTime());
+            const data = await response.json();
+            
+            // Filter hanya kosa kata (bukan kanji simbol)
+            allData = data.filter(item => item.cat !== 'kanji');
+            
+            // Ambil sesuai rentang yang dipilih
+            quizData = allData.slice(startIdx, endIdx);
+
+            if(quizData.length === 0) {
+                alert("Data tidak ditemukan untuk rentang ini.");
+                return;
+            }
+
+            // Acak urutan soal
+            quizData.sort(() => Math.random() - 0.5);
+
+            document.getElementById('setup-box').style.display = 'none';
+            document.getElementById('quiz-box').style.display = 'block';
+            showQuestion();
+        } catch (e) {
+            alert("Gagal memuat data. Periksa internet Anda.");
+        }
+    }
+
+    function showQuestion() {
+        if (currentIndex >= quizData.length) {
+            showResult();
+            return;
+        }
+
+        const item = quizData[currentIndex];
+        document.getElementById('progressText').innerText = `Progres: ${currentIndex + 1} / ${quizData.length}`;
+        document.getElementById('qKana').innerText = item.kana || "";
+        document.getElementById('qKanji').innerText = item.kanji || item.kana;
+
+        // Buat pilihan jawaban (1 benar, 3 salah acak dari seluruh data)
+        let choices = [item.meaning];
+        while (choices.length < 4) {
+            let randomItem = allData[Math.floor(Math.random() * allData.length)];
+            if (!choices.includes(randomItem.meaning)) {
+                choices.push(randomItem.meaning);
+            }
+        }
+        choices.sort(() => Math.random() - 0.5);
+
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = choice;
+            btn.onclick = () => checkAnswer(choice, item.meaning, btn);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, correct, btn) {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score++;
+        } else {
+            btn.classList.add('wrong');
+            allBtns.forEach(b => { if(b.innerText === correct) b.classList.add('correct'); });
+        }
+
+        setTimeout(() => {
+            currentIndex++;
+            showQuestion();
+        }, 1200);
+    }
+
+    function showResult() {
+        document.getElementById('quiz-box').style.display = 'none';
+        document.getElementById('result-box').style.display = 'block';
+        document.getElementById('finalScore').innerText = `Skor: ${score} / ${quizData.length}`;
+    }
+</script>
+</body>
+</html>
