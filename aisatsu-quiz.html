@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuis Aisatsu N5</title>
+    <title>Kuis Hiragana Aisatsu</title>
     <style>
         :root { --primary: #845ef7; --bg: #f0f2f5; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .quiz-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; margin-top: 20px; }
-        .q-word { font-size: 28px; font-weight: bold; color: #2f3542; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
+        .quiz-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; margin-top: 10px; }
+        .q-word { font-size: 24px; font-weight: bold; color: #2f3542; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; line-height: 1.5; background: #f8f9fa; border-radius: 15px; padding: 10px; }
         .options-grid { display: grid; gap: 10px; }
         .option-btn { padding: 15px; border: 2px solid #dfe4ea; border-radius: 12px; background: white; cursor: pointer; font-size: 16px; transition: 0.2s; }
         .correct { background: #2ed573 !important; color: white; border-color: #2ed573; }
@@ -22,8 +22,8 @@
 
 <div class="quiz-container">
     <div id="setup-box">
-        <h2 style="color: var(--primary);">Kuis Aisatsu (Salam)</h2>
-        <p>Uji hafalan 40 salam bahasa Jepang Anda.</p>
+        <h2 style="color: var(--primary);">Kuis Salam (Hiragana)</h2>
+        <p>Uji hafalan 40 salam dalam bentuk Hiragana.</p>
         <button class="btn-start" onclick="startQuiz()">Mulai Kuis</button>
     </div>
 
@@ -38,7 +38,7 @@
         <p style="font-size: 24px;" id="finalScore"></p>
         <button class="btn-start" onclick="location.reload()">Ulangi Kuis</button>
         <br><br>
-        <a href="index.html" style="text-decoration:none; color: #747d8c;">Kembali ke Menu Utama</a>
+        <a href="index.html" style="text-decoration:none; color: #747d8c; font-size: 14px;">Kembali ke Menu Utama</a>
     </div>
 </div>
 
@@ -53,11 +53,11 @@
             const response = await fetch(CLOUD_URL + '?t=' + new Date().getTime());
             const data = await response.json();
             
-            // Ambil hanya kategori aisatsu dan acak urutannya
+            // Ambil kategori aisatsu dan acak
             aisatsuData = data.filter(item => item.cat === 'aisatsu').sort(() => Math.random() - 0.5);
 
             if(aisatsuData.length === 0) {
-                alert("Data Aisatsu belum ada di Gist Anda.");
+                alert("Data Aisatsu tidak ditemukan.");
                 return;
             }
 
@@ -65,7 +65,7 @@
             document.getElementById('quiz-box').style.display = 'block';
             showQuestion();
         } catch (e) {
-            alert("Gagal memuat data. Periksa koneksi internet.");
+            alert("Gagal memuat data.");
         }
     }
 
@@ -77,10 +77,10 @@
 
         const item = aisatsuData[currentIndex];
         document.getElementById('progressText').innerText = `Soal ${currentIndex + 1} / ${aisatsuData.length}`;
-        // Tampilkan Kanji atau Kana
-        document.getElementById('qText').innerText = item.kanji;
+        
+        // PENTING: Menggunakan item.kana agar yang muncul hanya Hiragana
+        document.getElementById('qText').innerText = item.kana;
 
-        // Buat pilihan jawaban (1 benar, 3 salah)
         let choices = [item.meaning];
         let otherMeanings = aisatsuData.filter(a => a.meaning !== item.meaning).map(a => a.meaning);
         
@@ -123,7 +123,7 @@
     function showResult() {
         document.getElementById('quiz-box').style.display = 'none';
         document.getElementById('result-box').style.display = 'block';
-        document.getElementById('finalScore').innerText = `Skor Anda: ${score} / ${aisatsuData.length}`;
+        document.getElementById('finalScore').innerText = `Skor: ${score} / ${aisatsuData.length}`;
     }
 </script>
 </body>
