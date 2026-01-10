@@ -8,92 +8,29 @@
         :root { 
             --primary: #ff4757; 
             --secondary: #2ed573;
+            --aisatsu: #845ef7;
             --bg: #f0f2f5; 
             --card-front: #ffffff; 
             --card-back: #2f3542; 
         }
-        
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
-
-        /* HEADER KOMPAK */
-        header { 
-            text-align: center; 
-            position: sticky; 
-            top: 0; 
-            background: white; 
-            padding: 10px 5px; 
-            z-index: 100; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        h1 { font-size: 1.2rem; margin: 0 0 10px 0; color: #2f3542; }
-
-        /* NAVIGASI KUIS SEJAJAR */
-        .quiz-nav {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            padding: 0 10px;
-        }
-
-        .quiz-link { 
-            flex: 1;
-            max-width: 150px;
-            text-decoration: none; 
-            font-size: 12px;
-            font-weight: bold; 
-            padding: 8px 0; 
-            border-radius: 8px; 
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            transition: 0.3s;
-        }
+        header { text-align: center; position: sticky; top: 0; background: white; padding: 10px 5px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.2rem; margin: 0 0 10px 0; }
+        .quiz-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; padding: 0 10px; }
+        .quiz-link { flex: 1; max-width: 150px; text-decoration: none; font-size: 12px; font-weight: bold; padding: 8px 0; border-radius: 8px; border: 2px solid var(--primary); color: var(--primary); text-align: center; }
         .quiz-link.alt { border-color: var(--secondary); color: var(--secondary); }
-        .quiz-link:active { background: #eee; }
-
-        /* FILTER BUTTONS RAPAT */
-        .filter-container { 
-            display: flex; 
-            justify-content: center; 
-            gap: 4px; 
-            flex-wrap: wrap; 
-            margin-bottom: 8px;
-        }
-
-        .filter-btn { 
-            padding: 5px 10px; 
-            border: none; 
-            border-radius: 12px; 
-            background: #dfe4ea; 
-            cursor: pointer; 
-            font-size: 11px; 
-            color: #57606f;
-        }
-
+        .filter-container { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+        .filter-btn { padding: 5px 10px; border: none; border-radius: 12px; background: #dfe4ea; cursor: pointer; font-size: 11px; }
         .filter-btn.active { background: var(--primary); color: white; }
+        
+        /* WARNA KHUSUS TOMBOL */
         .btn-kanji { background: #fff3cd !important; color: #856404 !important; }
         .btn-kanji.active { background: #fcc419 !important; color: white !important; }
+        .btn-aisatsu { background: #f3f0ff !important; color: var(--aisatsu) !important; }
+        .btn-aisatsu.active { background: var(--aisatsu) !important; color: white !important; }
 
-        /* SEARCH INPUT RAMPING */
-        #searchInput { 
-            width: 85%; 
-            max-width: 350px; 
-            padding: 8px 12px; 
-            border-radius: 20px; 
-            border: 1px solid #ddd; 
-            font-size: 14px;
-            outline: none;
-        }
-
-        /* GRID KARTU */
-        .flashcard-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 12px; 
-            padding: 15px;
-        }
-
+        #searchInput { width: 85%; max-width: 350px; padding: 8px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 14px; outline: none; }
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 15px; }
         .card-container { height: 200px; perspective: 1000px; cursor: pointer; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.5s; transform-style: preserve-3d; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 15px; }
         .card-container.flipped .card-inner { transform: rotateY(180deg); }
@@ -101,13 +38,16 @@
         .card-front { background-color: var(--card-front); color: #2f3542; }
         .card-back { background-color: var(--card-back); color: white; transform: rotateY(180deg); }
         
-        /* STYLE KHUSUS KANJI */
+        /* STYLE KHUSUS KANJI (KUNING) */
         .card-container.kanji-style .card-front { background-color: #fff9db !important; border: 2px solid #fcc419; }
         .card-container.kanji-style .kanji { color: #856404 !important; }
         
+        /* STYLE KHUSUS AISATSU (UNGU) */
+        .card-container.aisatsu-style .card-front { background-color: #f3f0ff !important; border: 2px solid #845ef7; }
+        .card-container.aisatsu-style .kanji { color: #5f3dc4 !important; font-size: 1.5rem; }
+
         .kanji { font-size: 2rem; margin-bottom: 5px; color: var(--primary); }
-        .kana { font-size: 0.9rem; color: #747d8c; }
-        .romaji { font-size: 0.8rem; color: #a4b0be; }
+        .kana { font-size: 0.8rem; color: #747d8c; }
         .meaning { font-size: 1.1rem; font-weight: bold; }
         .category-tag { position: absolute; top: 8px; right: 8px; font-size: 0.5rem; background: #eee; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; color: #333; }
     </style>
@@ -116,21 +56,18 @@
 
     <header>
         <h1>N5 Flashcards 🇯🇵</h1>
-        
         <div class="quiz-nav">
             <a href="quiz.html" class="quiz-link">Kuis Kanji</a>
             <a href="vocab-quiz.html" class="quiz-link alt">Latihan Kata</a>
         </div>
-
         <div class="filter-container">
             <button class="filter-btn active" data-category="all">Semua</button>
             <button class="filter-btn" data-category="noun">Benda</button>
             <button class="filter-btn" data-category="verb">Kerja</button>
             <button class="filter-btn" data-category="adj">Sifat</button>
-            <button class="filter-btn" data-category="phrase">Salam</button>
+            <button class="filter-btn btn-aisatsu" data-category="aisatsu">Aisatsu</button>
             <button class="filter-btn btn-kanji" data-category="kanji">Kanji</button>
         </div>
-        
         <input type="text" id="searchInput" placeholder="Cari kosa kata atau arti...">
     </header>
 
@@ -145,15 +82,14 @@
                 const response = await fetch(CLOUD_URL + '?t=' + new Date().getTime());
                 vocabData = await response.json();
                 render();
-            } catch (e) { 
-                document.getElementById('flashcardGrid').innerHTML = "<p style='text-align:center; padding:20px;'>Gagal memuat data.</p>"; 
-            }
+            } catch (e) { document.getElementById('flashcardGrid').innerHTML = "Gagal memuat data."; }
         }
 
         function createCard(item) {
             const isKanji = item.cat === 'kanji';
+            const isAisatsu = item.cat === 'aisatsu';
             const container = document.createElement('div');
-            container.className = `card-container ${isKanji ? 'kanji-style' : ''}`;
+            container.className = `card-container ${isKanji ? 'kanji-style' : ''} ${isAisatsu ? 'aisatsu-style' : ''}`;
             container.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front">
@@ -175,13 +111,10 @@
             const grid = document.getElementById('flashcardGrid');
             grid.innerHTML = '';
             const filtered = vocabData.filter(item => {
-                let matchesCat = (filter === 'all') ? (item.cat !== 'kanji') : (item.cat === filter);
+                // LOGIKA ANTI GANDA: Jika 'all', sembunyikan Kanji DAN Aisatsu
+                let matchesCat = (filter === 'all') ? (item.cat !== 'kanji' && item.cat !== 'aisatsu') : (item.cat === filter);
                 const s = search.toLowerCase();
-                return matchesCat && (
-                    item.meaning.toLowerCase().includes(s) || 
-                    item.kanji.includes(s) || 
-                    (item.romaji && item.romaji.toLowerCase().includes(s))
-                );
+                return matchesCat && (item.meaning.toLowerCase().includes(s) || item.kanji.includes(s) || (item.romaji && item.romaji.toLowerCase().includes(s)));
             });
             filtered.forEach(item => grid.appendChild(createCard(item)));
         }
